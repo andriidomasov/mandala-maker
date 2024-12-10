@@ -1,7 +1,6 @@
 import random
 from flask import Flask, send_file, request, render_template
 from mandala_maker import *
-import numpy as np
 from io import BytesIO
 import math
 
