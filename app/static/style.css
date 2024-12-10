@@ -1,0 +1,30 @@
+body {
+    background-color: #f8f9fa;
+}
+.controls {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    padding: 1rem;
+    margin: 1rem 0;
+}
+.petal-config {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 0.8rem;
+    margin: 0.5rem 0;
+}
+.form-label { margin-bottom: 0; font-size: 0.9rem; }
+.number-input { width: 70px !important; }
+.mandala-preview img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+.config-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.form-check { margin: 0; }

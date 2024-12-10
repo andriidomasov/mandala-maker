@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Mandala Generator</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-center my-3">Mandala Generator</h1>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="controls">
+                    <form id="mandalaForm" onsubmit="updateMandala(event)">
+                        <div class="mb-2">
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="fillPetals" name="fill_petals">
+                                <label class="form-check-label" for="fillPetals">Fill petals</label>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label" for="segments">Segments:</label>
+                            <input type="number" class="form-control number-input" id="segments" 
+                                   name="segments" value="36" min="3" max="72">
+                        </div>
+                        
+                        <div id="petal-configs">
+                            <h5 class="mb-2">Petal Configurations</h5>
+                            {% for i in range(1, 6) %}
+                            <div class="petal-config">
+                                <div class="config-row mb-2">
+                                    <div class="form-check">
+                                        <input type="checkbox" class="form-check-input" 
+                                               id="enabled_{{ i }}" name="enabled_{{ i }}" 
+                                               {% if default_configs[i-1].enabled %}checked{% endif %}>
+                                    </div>
+                                    <h6 class="mb-0">Ring {{ i }}</h6>
+                                </div>
+                                <div class="row g-2">
+                                    <div class="col-4">
+                                        <label class="form-label">Size:</label>
+                                        <input type="number" class="form-control number-input" 
+                                               name="size_{{ i }}" value="{{ default_configs[i-1].size }}" 
+                                               step="0.01" min="0.01" max="0.5">
+                                    </div>
+                                    <div class="col-4">
+                                        <label class="form-label">Stretch:</label>
+                                        <input type="number" class="form-control number-input" 
+                                               name="stretch_{{ i }}" value="{{ default_configs[i-1].stretch }}" 
+                                               step="0.01" min="0.01" max="3">
+                                    </div>
+                                    <div class="col-4">
+                                        <label class="form-label">Distance:</label>
+                                        <input type="number" class="form-control number-input" 
+                                               name="min_dist_{{ i }}" value="{{ default_configs[i-1].min_dist }}" 
+                                               step="0.01" min="0" max="0.5">
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <div class="row g-2 mt-2">
+                            <div class="col-8">
+                                <button type="submit" class="btn btn-primary w-100">Generate Mandala</button>
+                            </div>
+                            <div class="col-4">
+                                <button type="button" class="btn btn-secondary w-100" onclick="randomizeSettings()">Random</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="col-md-8">
+                <div class="mandala-preview">
+                    <img id="mandalaImage" src="/mandala" alt="Generated Mandala" class="img-fluid">
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function randomizeSettings() {
+            // Randomize segments (between 12 and 48)
+            document.getElementById('segments').value = Math.floor(Math.random() * 36) + 12;
+            
+            // Randomize fill petals (20% chance)
+            document.getElementById('fillPetals').checked = Math.random() < 0.2;
+            
+            // Randomize each ring
+            for (let i = 1; i <= 5; i++) {
+                // Enable/disable (70% chance to enable)
+                document.getElementById(`enabled_${i}`).checked = Math.random() < 0.7;
+                
+                // Size (between 0.05 and 0.2)
+                const sizeInput = document.querySelector(`input[name="size_${i}"]`);
+                sizeInput.value = (Math.random() * 0.15 + 0.05).toFixed(2);
+                
+                // Stretch (between 0.01 and 3.0)
+                const stretchInput = document.querySelector(`input[name="stretch_${i}"]`);
+                stretchInput.value = (Math.random() * 2.99 + 0.01).toFixed(2);
+                
+                // Distance (between 0.05 and 0.4, increasing for outer rings)
+                const minDistInput = document.querySelector(`input[name="min_dist_${i}"]`);
+                const minDist = (Math.random() * 0.2 + 0.05 + (0.05 * (5-i))).toFixed(2);
+                minDistInput.value = minDist;
+            }
+            
+            // Trigger mandala generation
+            document.getElementById('mandalaForm').dispatchEvent(new Event('submit'));
+        }
+
+        function updateMandala(event) {
+            event.preventDefault();
+            const form = event.target;
+            const formData = new FormData(form);
+            const params = new URLSearchParams(formData);
+            const mandalaImage = document.getElementById('mandalaImage');
+            mandalaImage.src = '/mandala?' + params.toString();
+        }
+    </script>
+</body>
+</html> 
